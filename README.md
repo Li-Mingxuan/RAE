@@ -12,12 +12,15 @@ Diffusion Transformers with Representation Autoencoders. For JAX/TPU implementat
 
 We present Representation Autoencoders (RAE), a class of autoencoders that utilize  pretrained, frozen representation encoders such as [DINOv2](https://arxiv.org/abs/2304.07193) and [SigLIP2](https://arxiv.org/abs/2502.14786) as encoders with trained ViT decoders. RAE can be used in a two-stage training pipeline for high-fidelity image synthesis, where a Stage 2 diffusion model is trained on the latent space of a pretrained RAE to generate images.
 
+**🎵 NEW: Audio RAE Support** - This repository now includes an audio extension that adapts the RAE framework for audio and speech processing. See [AUDIO_README.md](AUDIO_README.md) for details.
+
 This repository contains:
 
 PyTorch/GPU:
 * A PyTorch implementation of RAE and pretrained weights.
 * A PyTorch implementation of LightningDiT, DiT<sup>DH</sup> and pretrained weights.
 * Training and sampling scripts for the two-stage RAE+DiT pipeline.
+* **Audio RAE**: Extension for audio/speech processing with Wav2Vec2, HuBERT, and spectrogram encoders.
 
 TorchXLA/TPU:
 * A TPU implementation of RAE and pretrained weights.
@@ -38,6 +41,9 @@ TorchXLA/TPU:
    # Install other dependencies
    uv pip install timm==0.9.16 accelerate==0.23.0 torchdiffeq==0.2.5 wandb
    uv pip install "numpy<2" transformers einops omegaconf
+   
+   # For audio processing (optional, only if using Audio RAE)
+   uv pip install librosa soundfile
    ```
 
 ## Data & Model Preparation
@@ -273,6 +279,28 @@ Use the ADM evaluation suite to score generated samples:
 
 See `XLA` branch for TPU support.
 
+## Audio RAE
+
+This repository now supports audio and speech processing through Audio RAE. The extension provides:
+
+- **Audio encoders**: Wav2Vec2, HuBERT, and spectrogram-based encoders
+- **Preprocessing**: Automatic waveform normalization and mel-spectrogram conversion  
+- **Example configs**: Ready-to-use configurations for different audio tasks
+- **Documentation**: Comprehensive guide in [AUDIO_README.md](AUDIO_README.md)
+
+Quick example:
+```bash
+# Generate a test audio file
+python src/generate_test_audio.py --output test_audio.wav
+
+# Reconstruct audio using Audio RAE
+python src/audio_sample.py \
+  --config configs/stage1/audio/wav2vec2_base.yaml \
+  --audio test_audio.wav \
+  --output reconstructed.wav
+```
+
+See [AUDIO_README.md](AUDIO_README.md) for complete documentation on using Audio RAE.
 
 
 ## Acknowledgement
