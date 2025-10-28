@@ -6,6 +6,7 @@ dependencies:
   - python == 3.10
   - pytorch == 2.6.0
   - torchvision == 0.21.0
+  - torchaudio  # Added for audio processing
   - pytorch-cuda == 12.1
   - pip
   - pip:
@@ -15,3 +16,5 @@ dependencies:
     - wandb
     - transformers
     - einops
+    - librosa  # Added for audio processing
+    - soundfile  # Added for audio file I/O

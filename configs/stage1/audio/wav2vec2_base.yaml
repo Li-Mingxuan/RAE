@@ -1,0 +1,50 @@
+# Audio RAE Configuration - Wav2Vec2 Encoder
+# This config uses Wav2Vec2-base as the frozen encoder with a ViT decoder
+
+stage_1:
+  target: stage1.audio_rae.AudioRAE
+  params:
+    # Audio-specific parameters
+    audio_type: 'waveform'  # Use raw waveform input
+    sample_rate: 16000      # 16kHz sampling rate
+    max_duration: 10.0      # Maximum 10 seconds of audio
+    target_length: 160000   # 10 seconds at 16kHz
+    
+    # Encoder configuration
+    encoder_cls: 'Wav2Vec2Encoder'
+    encoder_config_path: 'facebook/wav2vec2-base'
+    encoder_input_size: 160000  # 10 seconds at 16kHz
+    encoder_params: 
+      model_path: 'facebook/wav2vec2-base'
+      normalize: True
+    
+    # Decoder configuration
+    decoder_config_path: 'configs/decoder/ViTBase'
+    decoder_patch_size: 16
+    pretrained_decoder_path: null  # Set this to your trained decoder checkpoint
+    
+    # Training parameters
+    noise_tau: 0.8
+    reshape_to_2d: True
+    normalization_stat_path: null  # Set after computing stats on your audio dataset
+    eps: 1e-5
+
+# GAN discriminator configuration for Stage 1 training
+gan:
+  target: disc.discriminator.Discriminator
+  params:
+    nc: 1  # Single channel for audio spectrogram
+    ndf: 64
+    n_layers: 3
+
+# Training configuration
+training:
+  epochs: 100
+  batch_size: 16
+  learning_rate: 1e-4
+  ema_decay: 0.9999
+  gradient_accumulation_steps: 1
+  
+misc:
+  latent_size: [768, 8, 8]  # Adjust based on your encoder output
+  num_classes: null  # Not using class conditioning for basic audio
